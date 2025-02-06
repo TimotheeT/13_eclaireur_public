@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 import logging
 from pathlib import Path
 import pandas as pd
@@ -65,12 +65,14 @@ class WorkflowManager:
         for filename, filepath in config["files"].items():
             if Path(filepath).exists():
                 filepath = Path(filepath)
-                last_modified = datetime.fromtimestamp(filepath.stat().st_mtime)
-                age_in_days = (datetime.now() - last_modified).days
-                self.logger.info(f"Found: {filename} at {filepath}, last update: {last_modified}, age: {age_in_days} days")
+                created_at = datetime.fromtimestamp(filepath.stat().st_ctime)
+                age_in_days = (date.today() - created_at.date()).days
+                self.logger.info(f"Found: {filename} at {filepath}, create at metdata: {created_at}, age: {age_in_days} days")
 
                 if age_in_days > max_age_in_days:
                     self.logger.warning(f"{filename} file is older than {max_age_in_days} days. It is advised to refresh your data.")
+
+
 
 
 
